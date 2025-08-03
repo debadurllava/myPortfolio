@@ -6,20 +6,29 @@ export const ThemeToggle = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-  
-    if (storedTheme === "light") {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove("dark");
-    } else {
-      // default to dark mode
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-      if (!storedTheme) {
-        localStorage.setItem("theme", "dark");
-      }
-    }
-  }, []);
+  const THEME_VERSION = "v2"; // change this version on future deployments
+  const storedVersion = localStorage.getItem("theme-version");
+
+  // Reset to dark mode if version is outdated or missing
+  if (storedVersion !== THEME_VERSION) {
+    localStorage.setItem("theme", "dark");
+    localStorage.setItem("theme-version", THEME_VERSION);
+    document.documentElement.classList.add("dark");
+    setIsDarkMode(true);
+    return;
+  }
+
+  // Normal theme loading
+  const storedTheme = localStorage.getItem("theme");
+  if (storedTheme === "light") {
+    document.documentElement.classList.remove("dark");
+    setIsDarkMode(false);
+  } else {
+    document.documentElement.classList.add("dark");
+    setIsDarkMode(true);
+  }
+}, []);
+
   
 
   const toggleTheme = () => {
